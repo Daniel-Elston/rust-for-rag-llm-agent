@@ -7,7 +7,7 @@ import attrs
 
 @attrs.define
 class StepDefinition:
-    name: str
+    order_name: str
     step_class: Type
     args: dict
     method_name: str = "run"

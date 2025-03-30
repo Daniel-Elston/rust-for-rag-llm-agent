@@ -5,20 +5,19 @@ import logging
 from pathlib import Path
 
 from src.core.step_handling.step_registry import StepRegistry
-from src.pipelines.steps.prepare_raw_steps import process_documents
 from utils.file_access import FileAccess
 
+from config.pipeline_context import PipelineContext
+from src.core.base_pipeline import BasePipeline
 
-step_sequence = [
-    "loading",
-    "processing",
-]
+
+definition_sequence = BasePipeline(PipelineContext()).defs
 
 def debug_steps():
     steps_metadata = StepRegistry.list_all_steps()
 
     ordered_steps = []
-    for idx, step in enumerate(step_sequence, start=1):
+    for idx, step in enumerate(definition_sequence, start=1):
         step_metadata = steps_metadata.get(step, [])
         ordered_steps.append({
             "step": step,

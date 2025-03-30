@@ -29,10 +29,6 @@ class Params:
 class HyperParams:
     pass
 
-    def __attrs_post_init__(self):
-        pass
-
-
 
 @attr.s
 class Settings:

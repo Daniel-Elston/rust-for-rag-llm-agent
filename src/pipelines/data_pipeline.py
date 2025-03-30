@@ -22,9 +22,9 @@ class DataPipeline(BasePipeline):
         )
 
     def process_docs(self):
-        step_defs = StepHandler.get_step_defs("process-docs", self.modules)
+        step_defs = StepHandler.get_step_defs(self.defs[0], self.modules)
         step_map = StepHandler.create_step_map(step_defs)
-        step_order = ["load", "process"]
-        save_points = ["load", "process"]
+        step_order = [self.order[0], self.order[1]]
+        save_points = [self.saves[0], self.saves[1]]
         factory = StepFactory(ctx=self.ctx, step_map=step_map)
         factory.run_pipeline(step_order, save_points)

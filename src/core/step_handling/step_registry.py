@@ -1,10 +1,24 @@
 from __future__ import annotations
 
+import logging
 from collections import defaultdict
 from functools import wraps
 from typing import Any
 from typing import Dict
 from typing import List
+
+from typing import Callable, Dict, Any
+from src.core.step_handling.step_definition import StepDefinition
+
+
+STEP_FUNC_REGISTRY: Dict[str, Callable[..., list[StepDefinition]]] = {}
+
+def register_step_func(definition: str) -> Callable:
+    """Decorator to register a step function under a given definition."""
+    def decorator(fn: Callable[..., list[StepDefinition]]) -> Callable[..., list[StepDefinition]]:
+        STEP_FUNC_REGISTRY[definition] = fn
+        return fn
+    return decorator
 
 
 class StepRegistry:
@@ -18,22 +32,22 @@ class StepRegistry:
     Extended Summary
     ----------
     - Uses decorator-based registration at module import time
-    - Organizes steps by category (e.g., 'preprocessing', 'modeling')
+    - Organizes steps by definition (e.g., 'preprocessing', 'modeling')
     - Stores metadata including arguments, outputs, and execution order
     - Provides complete registry inspection via list_all_steps()
 
     Returns
     -------
     Dict[str, List[Dict[str, Any]]]
-        Category-keyed dictionary of step metadata when using list_all_steps()
+        Definition-keyed dictionary of step metadata when using list_all_steps()
     """
     _registry: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
 
     @classmethod
     def register(
         cls,
-        category: str,
-        name: str,
+        definition: str,
+        order_name: str,
         step_class: Any,
         args: Dict[str, Any],
         outputs: List[str],
@@ -45,14 +59,14 @@ class StepRegistry:
         def decorator(fn):
             # Record the metadata at import time
             metadata = {
-                "name": name,
-                "substep_n": len(cls._registry[category]) + 1,
+                "order_name": order_name,
+                "substep_n": len(cls._registry[definition]) + 1,
                 "step_class": step_class.__name__,
                 "args": args,
                 "outputs": outputs,
                 # leave a blank line
             }
-            cls._registry[category].append(metadata)
+            cls._registry[definition].append(metadata)
 
             # Return the original function unmodified
             @wraps(fn)
@@ -65,6 +79,6 @@ class StepRegistry:
     def list_all_steps(cls) -> Dict[str, List[Dict[str, Any]]]:
         """
         Retrieves complete step registry at import time
-        Provides snapshot of all registered steps organized by category.
+        Provides snapshot of all registered steps organized by definition.
         """
         return dict(cls._registry)

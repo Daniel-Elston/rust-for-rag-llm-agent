@@ -11,6 +11,7 @@ from config.states import DataState
 from config.states import ModelState
 from config.states import States
 from src.core.data_handling.data_module_handler import DataModuleHandler
+from config.orchestration import PipelineOrchestration
 
 
 class BasePipeline(ABC):
@@ -45,6 +46,9 @@ class BasePipeline(ABC):
         self.paths: Paths = ctx.paths
         self.config: Config = ctx.settings.config
         self.params: Params = ctx.settings.params
+        self.defs: PipelineOrchestration = ctx.orchestration.step_definitions
+        self.order: PipelineOrchestration = ctx.orchestration.step_order
+        self.saves: PipelineOrchestration = ctx.orchestration.save_points
         self.hyperparams: HyperParams = ctx.settings.hyperparams
         self.states: States = ctx.states
         self.data_state: DataState = ctx.states.data

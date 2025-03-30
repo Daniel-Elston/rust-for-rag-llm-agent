@@ -7,6 +7,7 @@ from typing import List
 
 from src.core.step_handling.step_definition import StepDefinition
 from src.pipelines.steps import prepare_raw_steps
+from src.core.step_handling.step_registry import STEP_FUNC_REGISTRY
 
 
 class StepHandler:
@@ -33,9 +34,10 @@ class StepHandler:
     ValueError
         When requesting undefined category
     """
-    _step_to_func: Dict[str, Callable] = {
-        "process-docs": prepare_raw_steps.process_documents,
-    }
+    # _step_to_func: Dict[str, Callable] = {
+    #     "process-docs": prepare_raw_steps.process_documents,
+    # }
+    _step_to_func: Dict[str, Callable] = STEP_FUNC_REGISTRY
 
     @classmethod
     def get_step_defs(cls, category: str, *args: Any, **kwargs: Any) -> List[StepDefinition]:
@@ -58,7 +60,7 @@ class StepHandler:
         format required by StepFactorys step_map.
         """
         return {
-            step_def.name: (
+            step_def.order_name: (
                 step_def.step_class,
                 step_def.args,
                 step_def.method_name
