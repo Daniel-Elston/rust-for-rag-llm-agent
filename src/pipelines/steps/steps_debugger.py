@@ -17,7 +17,7 @@ def debug_steps():
     steps_metadata = StepRegistry.list_all_steps()
 
     ordered_steps = []
-    for idx, step in enumerate(definition_sequence, start=1):
+    for idx, step in enumerate(definition_sequence, start=0):
         step_metadata = steps_metadata.get(step, [])
         ordered_steps.append({
             "step": step,

@@ -4,8 +4,16 @@ import re
 import unicodedata
 
 from config.pipeline_context import PipelineContext
-from config.states import DataState
 from src.core.data_handling.data_module import DataModule
+from dataclasses import dataclass
+
+
+@dataclass
+class Document:
+    page_content: str
+    object_count: int
+    source_file: str
+    metadata: dict
 
 
 class ProcessDocuments:
@@ -23,13 +31,17 @@ class ProcessDocuments:
     ):
         self.ctx = ctx
         self.dataset = dataset
-        self.data_state: DataState = ctx.states.data
 
     def run(self):
+        self.format_document_text()
         for doc in self.dataset:
             doc.page_content = self.clean_document_text(doc.page_content)
         return {"processed-docs-all": self.dataset}
 
+    def format_document_text(self):
+        if isinstance(self.dataset[0], dict):
+            self.dataset = [Document(**doc) for doc in self.dataset]
+        
     def clean_document_text(self, text: str) -> str:
         text = unicodedata.normalize('NFKC', text)
         text = re.sub(r"\s+", " ", text).strip()

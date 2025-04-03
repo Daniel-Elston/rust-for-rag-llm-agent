@@ -13,7 +13,9 @@ class DataPipeline(BasePipeline):
         super().__init__(ctx)
         self.modules = {
             'raw-paths': self.paths,
-            'raw-docs': self.dm_handler.get_dm('raw-docs-all'),
+            'raw-docs-all': self.dm_handler.get_dm('raw-docs-all'),
+            'processed-docs-all': self.dm_handler.get_dm('processed-docs-all'),
+            'chunked-docs-all': self.dm_handler.get_dm('chunked-docs-all'),
         }
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.params.chunk_size,
@@ -22,9 +24,27 @@ class DataPipeline(BasePipeline):
         )
 
     def process_docs(self):
-        step_defs = StepHandler.get_step_defs(self.defs[0], self.modules)
+        step_defs = StepHandler.get_step_defs(self.defs["process-docs"], self.modules)
         step_map = StepHandler.create_step_map(step_defs)
-        step_order = [self.order[0], self.order[1]]
-        save_points = [self.saves[0], self.saves[1]]
+        step_order = [
+            self.order["load"],
+            self.order["process"],
+        ]
+        save_points = [
+            self.order["process"],
+        ]
+        factory = StepFactory(ctx=self.ctx, step_map=step_map)
+        factory.run_pipeline(step_order, save_points)
+        
+    def chunk_docs(self):
+        step_defs = StepHandler.get_step_defs(
+            self.defs["chunk-docs"], self.modules, self.text_splitter)
+        step_map = StepHandler.create_step_map(step_defs)
+        step_order = [
+            self.order["chunk"],
+        ]
+        save_points = [
+            self.order["chunk"],
+        ]
         factory = StepFactory(ctx=self.ctx, step_map=step_map)
         factory.run_pipeline(step_order, save_points)

@@ -6,8 +6,11 @@ from typing import Dict
 from typing import List
 
 from src.core.step_handling.step_definition import StepDefinition
-from src.pipelines.steps import prepare_raw_steps
 from src.core.step_handling.step_registry import STEP_FUNC_REGISTRY
+
+# Ensure to import steps here, even if not used:
+from src.pipelines.steps import prepare_raw_steps
+from src.pipelines.steps import chunk_doc_steps
 
 
 class StepHandler:
@@ -34,9 +37,6 @@ class StepHandler:
     ValueError
         When requesting undefined category
     """
-    # _step_to_func: Dict[str, Callable] = {
-    #     "process-docs": prepare_raw_steps.process_documents,
-    # }
     _step_to_func: Dict[str, Callable] = STEP_FUNC_REGISTRY
 
     @classmethod

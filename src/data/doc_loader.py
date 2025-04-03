@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from langchain_community.document_loaders import ArxivLoader, PyPDFLoader
 
+import logging
 from config.paths import Paths
 from config.pipeline_context import PipelineContext
 from config.settings import Config
-
+import rust_doc_loader
+from pprint import pprint, pformat
 
 class DocumentLoader:
     """
@@ -24,13 +26,16 @@ class DocumentLoader:
         self.all_docs = []
 
     def run(self):
-        self.load_pdfs()
-        self.load_arxiv()
-        meta_log = self._log_doc_metadata()
-        return {
-            "raw-docs-all": self.all_docs,
-            "raw-doc-metadata": meta_log
-        }
+        rust_doc_loader.run_document_pipeline()
+
+        # self.load_pdfs()
+        # self.load_arxiv()
+        # self._log_doc_metadata()
+        if self.all_docs:
+            return {
+                "raw-docs-all": self.all_docs,
+                # "raw-doc-metadata": meta_log
+            }
 
     def load_pdfs(self):
         for idx in ["raw-p1", "raw-p2"]:
@@ -52,8 +57,9 @@ class DocumentLoader:
 
     def _log_doc_metadata(self):
         for i, doc in enumerate(self.all_docs):
-            return (
+            metadata = (
                 f"Document {i + 1}:\n"
                 f"Metadata:\n{doc.metadata}\n"
                 f"Page Content (Sample):\n{doc.page_content[250:1000]}\n\n"
             )
+        logging.warning(pformat(metadata))

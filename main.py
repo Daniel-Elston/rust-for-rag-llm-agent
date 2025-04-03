@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import time
 
 from config.pipeline_context import PipelineContext
 from src.core.step_handling.step_factory import StepFactory
@@ -19,6 +20,7 @@ class MainPipeline:
         """ETL pipeline main entry point."""
         steps = [
             DataPipeline(self.ctx).process_docs,
+            DataPipeline(self.ctx).chunk_docs,
         ]
         StepFactory(self.ctx).run_main(steps)
 
@@ -28,6 +30,9 @@ if __name__ == "__main__":
     debug_steps()
     try:
         logging.info(f"Beginning Top-Level Pipeline from ``main.py``...\n{"=" * 125}")
+        start_t = time.perf_counter()
         MainPipeline(ctx).run()
+        end_t = time.perf_counter()
+        logging.warning(f"Pipeline executed in {(end_t - start_t):.3f} seconds.")
     except Exception as e:
         logging.error(f"{e}", exc_info=True)

@@ -47,6 +47,7 @@ class StepRegistry:
     def register(
         cls,
         definition: str,
+        order_idx: int,
         order_name: str,
         step_class: Any,
         args: Dict[str, Any],
@@ -60,11 +61,11 @@ class StepRegistry:
             # Record the metadata at import time
             metadata = {
                 "order_name": order_name,
-                "substep_n": len(cls._registry[definition]) + 1,
+                "order_idx": order_idx,
+                "substep_n": len(cls._registry[definition]),
                 "step_class": step_class.__name__,
                 "args": args,
                 "outputs": outputs,
-                # leave a blank line
             }
             cls._registry[definition].append(metadata)
 
