@@ -1,56 +1,41 @@
 from __future__ import annotations
 
-import logging
 from src.core.data_handling.lazy_load import LazyLoad
 from src.core.step_handling.step_definition import StepDefinition
-from src.core.step_handling.step_registry import StepRegistry
-
-from src.core.step_handling.step_registry import register_step_func
+from src.core.step_handling.step_registry import StepBuilder
 
 from src.data.process import ProcessDocuments
 from src.data.doc_loader import DocumentLoader
 
-from config.orchestration import STEP_ORCHESTRATION
 
-
-definition_key = STEP_ORCHESTRATION["step-defs"]["process-docs"]
-order_key = STEP_ORCHESTRATION["step-order"]
-
-@StepRegistry.register(
-    definition=definition_key,
+@StepBuilder.build(
+    definition="process-docs", 
     order_idx=1,
-    order_name=order_key["process"],
+    order_name="process",
     step_class=ProcessDocuments,
     args={"dataset": "raw-docs-all"},
-    outputs=["processed-docs-all"],
+    outputs=["processed-docs-all"]
 )
-@StepRegistry.register(
-    definition=definition_key,
+@StepBuilder.build(
+    definition="process-docs",
     order_idx=0,
-    order_name=order_key["load"],
+    order_name="load",
     step_class=DocumentLoader,
-    args={"dataset": "Paths[raw-paths]"},
-    outputs=["raw-docs-all"],
+    args={"paths": "raw-paths"},
+    outputs=["raw-docs-all"]
 )
-
-@register_step_func(definition_key)
-def process_documents(modules: dict) -> list[StepDefinition]:
-    logging.warning(f"Registering step - ``{definition_key}: {process_documents.__name__}``")
+def process_step(modules: dict) -> list[StepDefinition]:
     return [
         StepDefinition(
-            order_name=order_key["load"],
+            order_name="load",
             step_class=DocumentLoader,
-            args={
-                "paths": modules.get("raw-paths"),
-            },
-            outputs=["raw-docs-all"],
+            args={"paths": modules["raw-paths"]},
+            outputs=["raw-docs-all"]
         ),
         StepDefinition(
-            order_name=order_key["process"],
+            order_name="process",
             step_class=ProcessDocuments,
-            args={
-                "dataset": LazyLoad(dm=modules.get("raw-docs-all")),
-            },
-            outputs=["processed-docs-all"],
-        ),
+            args={"dataset": LazyLoad(modules["raw-docs-all"])},
+            outputs=["processed-docs-all"]
+        )
     ]

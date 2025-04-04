@@ -81,4 +81,4 @@ class DataModuleHandler:
                     raise ValueError(f"Dataset at {dm.data_path} is empty.")
             return dm._loaded_data
         except Exception as e:
-            raise ValueError(f"Failed to load data from {dm.data_path}: {e}")
+            raise FileNotFoundError(f"Failed to load data from ``{dm.data_path}``. Ensure checkpoint keys are correct.")

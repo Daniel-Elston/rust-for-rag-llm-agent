@@ -51,7 +51,7 @@ class DataModule:
         data_dict: Optional[dict] = None,
     ):
         if not state_key and not data_path:
-            raise ValueError("Either `state_key` or `data_path` must be provided.")
+            raise KeyError(f"Unknown path key for modules ``get_dm``. Ensure matching key exists in ``config/paths.py``.")
 
         self.ctx = ctx
         self.state_key = state_key

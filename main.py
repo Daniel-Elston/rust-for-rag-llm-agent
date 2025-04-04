@@ -4,7 +4,7 @@ import logging
 import time
 
 from config.pipeline_context import PipelineContext
-from src.core.step_handling.step_factory import StepFactory
+from src.core.step_handling.step_executor import StepExecutor
 
 from src.pipelines.data_pipeline import DataPipeline
 
@@ -22,7 +22,7 @@ class MainPipeline:
             DataPipeline(self.ctx).process_docs,
             DataPipeline(self.ctx).chunk_docs,
         ]
-        StepFactory(self.ctx).run_main(steps)
+        StepExecutor(self.ctx).run_main(steps)
 
 
 if __name__ == "__main__":

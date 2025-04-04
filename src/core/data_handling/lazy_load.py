@@ -17,8 +17,5 @@ class LazyLoad:
 
     def load(self, dm_handler: DataModuleHandler):
         if self.dm is None:
-            raise AttributeError("`NoneType` object. Verify module path keys, and path config keys")
-        try:
-            return dm_handler.load_dm(self.dm)
-        except Exception as e:
-            raise ValueError(f"Failed to load data from {self.dm.data_path}: {e}")
+            raise KeyError(f"Unknown module key in LazyLoad. Ensure matching key exists in ``*_pipeline.py``.")
+        return dm_handler.load_dm(self.dm)

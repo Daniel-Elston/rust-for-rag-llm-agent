@@ -7,18 +7,20 @@ from pathlib import Path
 from src.core.step_handling.step_registry import StepRegistry
 from utils.file_access import FileAccess
 
-from config.pipeline_context import PipelineContext
-from src.core.base_pipeline import BasePipeline
+from config.orchestration import STEP_ORCHESTRATION
 
-
-definition_sequence = BasePipeline(PipelineContext()).defs
 
 def debug_steps():
     steps_metadata = StepRegistry.list_all_steps()
 
     ordered_steps = []
-    for idx, step in enumerate(definition_sequence, start=0):
+    for idx, step in enumerate(STEP_ORCHESTRATION["step-defs"], start=0):
         step_metadata = steps_metadata.get(step, [])
+        
+        for entry in step_metadata:
+            if "step_class" in entry and isinstance(entry["step_class"], type):
+                entry["step_class"] = f"{entry['step_class'].__module__}.{entry['step_class'].__qualname__}"
+                
         ordered_steps.append({
             "step": step,
             "step_n": idx,

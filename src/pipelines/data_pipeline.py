@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from config.pipeline_context import PipelineContext
 from src.core.base_pipeline import BasePipeline
-from src.core.step_handling.step_factory import StepFactory
-from src.core.step_handling.step_handler import StepHandler
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Ensure to import src/pipeline/steps/*_steps.py at top of *_pipeline.py:
+from src.pipelines.steps import prepare_raw_steps
+from src.pipelines.steps import chunk_doc_steps
 
 
 class DataPipeline(BasePipeline):
@@ -24,27 +26,21 @@ class DataPipeline(BasePipeline):
         )
 
     def process_docs(self):
-        step_defs = StepHandler.get_step_defs(self.defs["process-docs"], self.modules)
-        step_map = StepHandler.create_step_map(step_defs)
-        step_order = [
-            self.order["load"],
-            self.order["process"],
-        ]
-        save_points = [
-            self.order["process"],
-        ]
-        factory = StepFactory(ctx=self.ctx, step_map=step_map)
-        factory.run_pipeline(step_order, save_points)
-        
+        self.build_pipeline(
+            def_key="process-docs",
+            modules=self.modules,
+            step_order=[
+                self.order.get("load"),
+                self.order.get("process")
+            ],
+            checkpoints=[self.order.get("process")],
+        )
+
     def chunk_docs(self):
-        step_defs = StepHandler.get_step_defs(
-            self.defs["chunk-docs"], self.modules, self.text_splitter)
-        step_map = StepHandler.create_step_map(step_defs)
-        step_order = [
-            self.order["chunk"],
-        ]
-        save_points = [
-            self.order["chunk"],
-        ]
-        factory = StepFactory(ctx=self.ctx, step_map=step_map)
-        factory.run_pipeline(step_order, save_points)
+        self.build_pipeline(
+            def_key="chunk-docs",
+            modules=self.modules,
+            step_order=[self.order.get("chunk")],
+            checkpoints=[self.order.get("chunk")],
+            text_splitter=self.text_splitter,
+        )

@@ -1,31 +1,21 @@
 from __future__ import annotations
 
 import logging
+
 from collections import defaultdict
 from functools import wraps
-from typing import Any
-from typing import Dict
-from typing import List
 
-from typing import Callable, Dict, Any
-from src.core.step_handling.step_definition import StepDefinition
+from typing import Any, Callable, Dict, List, Type
 
-
-STEP_FUNC_REGISTRY: Dict[str, Callable[..., list[StepDefinition]]] = {}
-
-def register_step_func(definition: str) -> Callable:
-    """Decorator to register a step function under a given definition."""
-    def decorator(fn: Callable[..., list[StepDefinition]]) -> Callable[..., list[StepDefinition]]:
-        STEP_FUNC_REGISTRY[definition] = fn
-        return fn
-    return decorator
+from config.orchestration import STEP_ORCHESTRATION
+from pprint import pprint
 
 
 class StepRegistry:
     """
     Summary
     ----------
-    Central catalog for pipeline step configurations
+    Central catalog for pipeline step configurations.
     Maintains import-time metadata about pipeline steps using class decorators.
     Enables discovery of available steps and their configurations.
 
@@ -41,45 +31,61 @@ class StepRegistry:
     Dict[str, List[Dict[str, Any]]]
         Definition-keyed dictionary of step metadata when using list_all_steps()
     """
-    _registry: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    _metadata = defaultdict(list)
+    _definitions: Dict[str, Callable] = {}
 
     @classmethod
-    def register(
-        cls,
-        definition: str,
-        order_idx: int,
-        order_name: str,
-        step_class: Any,
-        args: Dict[str, Any],
-        outputs: List[str],
-    ):
-        """
-        Registers step metadata in the global registry
-        Decorator that records step configuration during module import.
-        """
+    def register(cls, is_definition: bool = False, **kwargs):
         def decorator(fn):
-            # Record the metadata at import time
-            metadata = {
-                "order_name": order_name,
-                "order_idx": order_idx,
-                "substep_n": len(cls._registry[definition]),
-                "step_class": step_class.__name__,
-                "args": args,
-                "outputs": outputs,
-            }
-            cls._registry[definition].append(metadata)
-
-            # Return the original function unmodified
-            @wraps(fn)
-            def wrapper(*inner_args, **inner_kwargs):
-                return fn(*inner_args, **inner_kwargs)
-            return wrapper
+            if is_definition:
+                cls._definitions[kwargs['definition']] = fn
+            cls._metadata[kwargs['definition']].append(kwargs)
+            return fn
         return decorator
 
     @classmethod
+    def get_definition_func(cls, defs_key: str, *args, **kwargs) -> Callable:
+        try:
+            func = cls._definitions[defs_key]
+            logging.warning(f"Registering orchestration step: ``{defs_key}``, for func: ``{func.__name__}``")
+            return func(*args, **kwargs)
+        except:
+            args = dict(*args)
+            available_defs = list(cls._definitions.keys())
+            available_paths = list(args.keys())
+            raise KeyError(f"Unknown key input for defs or modules. Available definitions: {available_defs}. Available module keys: {available_paths}")
+
+    @classmethod
     def list_all_steps(cls) -> Dict[str, List[Dict[str, Any]]]:
-        """
-        Retrieves complete step registry at import time
-        Provides snapshot of all registered steps organized by definition.
-        """
-        return dict(cls._registry)
+        return dict(cls._metadata)
+
+class StepBuilder:
+    """
+    Summary
+    ----------
+    Simplified step registration
+    """
+    @classmethod
+    def build(
+        cls, definition: str,
+        order_idx: int,
+        order_name: str,
+        step_class: Type,
+        args: Dict[str, Any],
+        outputs: List[str]
+    ):
+        def decorator(fn):
+            @StepRegistry.register(
+                definition=STEP_ORCHESTRATION["step-defs"][definition],
+                order_idx=order_idx,
+                order_name=STEP_ORCHESTRATION["step-order"][order_name],
+                step_class=step_class,
+                args=args,
+                outputs=outputs,
+                is_definition=True  # marks as def fn
+            )
+            @wraps(fn)
+            def wrapped(*args, **kwargs):
+                return fn(*args, **kwargs)
+            return wrapped
+        return decorator

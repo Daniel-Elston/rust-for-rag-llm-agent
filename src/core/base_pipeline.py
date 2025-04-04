@@ -11,6 +11,11 @@ from config.states import DataState
 from config.states import ModelState
 from config.states import States
 from src.core.data_handling.data_module_handler import DataModuleHandler
+
+from typing import List, Dict
+from src.core.step_handling.step_executor import StepExecutor
+from src.core.step_handling.step_registry import StepRegistry
+
 from config.orchestration import STEP_ORCHESTRATION
 
 
@@ -54,3 +59,30 @@ class BasePipeline(ABC):
         
         self.defs = STEP_ORCHESTRATION["step-defs"]
         self.order = STEP_ORCHESTRATION["step-order"]
+    
+    def build_pipeline(
+        self, def_key:str,
+        modules: Dict,
+        step_order: List[str],
+        checkpoints: List[str] = None,
+        **step_kwargs
+    ):
+        """
+        Template method for standard pipeline construction
+        
+        Args:
+            definition_key: Key from STEP_ORCHESTRATION['step-defs']
+            modules: Dictionary of module imports
+            step_order: List of step names to execute in order
+            checkpoints: Steps where data should be persisted
+            runtime_kwargs: Additional arguments for step definitions
+        """
+        checkpoints = checkpoints or []
+        step_defs = StepRegistry.get_definition_func(
+            self.defs.get(def_key),
+            modules,
+            **step_kwargs
+        )
+        executor = StepExecutor(self.ctx)
+        executor.register_steps(step_defs)
+        executor.run_pipeline(step_order, checkpoints)
