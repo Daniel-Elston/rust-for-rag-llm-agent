@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import msgpack
+
 import logging
 from pathlib import Path
-
+from typing import Dict, List
 import joblib
 import numpy as np
 import pandas as pd
@@ -35,6 +37,8 @@ class FileAccess:
             return pd.read_json(path, orient="index")
         elif suffix == ".pkl":
             return pickle.load(open(path, "rb"))
+        elif suffix == ".msgpack": # Add support for .msgpack extension
+            return FileAccess.load_msgpack(path)
         elif suffix == ".pdf":
             pass
         else:
@@ -57,13 +61,18 @@ class FileAccess:
         elif suffix == ".json":
             if isinstance(df, pd.DataFrame):
                 return df.to_json(path, orient="records", indent=4)
-            elif isinstance(df, dict):
+            elif isinstance(df, List):
                 return FileAccess.save_json(df, path)
         elif suffix == ".pkl":
             return pickle.dump(df, open(path, "wb"))
         elif suffix == ".txt":
             with open(path, "a", encoding="utf-8") as f:
                 f.write(df)
+        elif suffix == ".msgpack":  # Add support for .msgpack extension
+            if isinstance(df, List):
+                return FileAccess.save_msgpack(df, path)
+            else:
+                raise TypeError(f"Unsupported data type for MessagePack: {type(df)}")
         else:
             raise ValueError(f"Unknown file type: {path} {suffix}")
 
@@ -80,3 +89,22 @@ class FileAccess:
             logging.debug(f"Saving json to ``{path}``")
             with open(path, "w") as file:
                 json.dump(data, file)
+
+    @staticmethod
+    def save_msgpack(data: List[dict], path: Path, overwrite=False):
+        """Saves data to a MessagePack file."""
+        if overwrite is False and Path(path).exists():
+            pass
+        else:
+            logging.debug(f"Saving MessagePack to ``{path}``")
+            with open(path, "wb") as file:
+                packed_data = msgpack.pack(data)
+                file.write(packed_data)
+
+    @staticmethod
+    def load_msgpack(path: Path):
+        """Loads data from a MessagePack file."""
+        logging.getLogger("file_access").file_track(f"Loading Input File: ``{path}``")
+        with open(path, "rb") as file:
+            unpacked_data = msgpack.unpackb(file.read(), raw=False)
+            return unpacked_data

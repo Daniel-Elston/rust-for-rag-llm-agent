@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import List, Dict
 
 from config.paths import Paths
 from config.pipeline_context import PipelineContext
@@ -12,7 +13,6 @@ from config.states import ModelState
 from config.states import States
 from src.core.data_handling.data_module_handler import DataModuleHandler
 
-from typing import List, Dict
 from src.core.step_handling.step_executor import StepExecutor
 from src.core.step_handling.step_registry import StepRegistry
 
@@ -73,9 +73,9 @@ class BasePipeline(ABC):
         Args:
             definition_key: Key from STEP_ORCHESTRATION['step-defs']
             modules: Dictionary of module imports
-            step_order: List of step names to execute in order
+            step_order: Key from STEP_ORCHESTRATION['step-order']
             checkpoints: Steps where data should be persisted
-            runtime_kwargs: Additional arguments for step definitions
+            step_kwargs: Additional arguments for step definitions
         """
         checkpoints = checkpoints or []
         step_defs = StepRegistry.get_definition_func(

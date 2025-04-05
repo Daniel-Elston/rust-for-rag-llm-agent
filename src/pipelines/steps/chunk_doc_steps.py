@@ -13,7 +13,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
     order_idx=2,
     order_name="chunk",
     step_class=ChunkDocuments,
-    args={"dataset": "processed-docs-all"},
+    args={"dataset": "processed-docs-all", "text_splitter": "RecursiveCharacterTextSplitter"},
     outputs=["chunked-docs-all"]
 )
 def chunk_documents(modules: dict, text_splitter: RecursiveCharacterTextSplitter) -> list[StepDefinition]:

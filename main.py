@@ -21,6 +21,7 @@ class MainPipeline:
         steps = [
             DataPipeline(self.ctx).process_docs,
             DataPipeline(self.ctx).chunk_docs,
+            DataPipeline(self.ctx).embed_docs,
         ]
         StepExecutor(self.ctx).run_main(steps)
 

@@ -21,7 +21,8 @@ paths_store = {
     # "raw-docs-all": Path("data/sdo/raw-docs-all.pkl"),
     "raw-docs-all": Path("data/sdo/rs-docs.pkl"),
     "processed-docs-all": Path("data/processed/processed-docs-all.pkl"),
-    "chunked-docs-all": Path("data/processed/chunked_docs.pkl"),
+    "chunked-docs-all": Path("data/processed/chunked_docs.json"),
+    "embeddings-docs-all": Path("data/embeddings/embeddings.json"),
     # Outputs
     "raw-doc-metadata": Path("reports/outputs/raw-doc-metadata.txt"),
     "sample-chunks": Path("reports/outputs/sample-chunks.txt"),
