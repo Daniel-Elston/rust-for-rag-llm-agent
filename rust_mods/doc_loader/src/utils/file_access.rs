@@ -14,8 +14,6 @@ use crate::data::load_docs::LoadedDoc;
 #[derive(Serialize, Deserialize, Debug)]
 struct SerializableDoc {
     page_content: String,
-    source_file: String,
-    object_count: usize,
     metadata: HashMap<String, String>,
 }
 
@@ -35,8 +33,6 @@ pub fn run_persist(
     let ser_docs: Vec<SerializableDoc> = docs.into_iter().map(|loaded_doc| {
         SerializableDoc {
             page_content: loaded_doc.page_content,
-            source_file: loaded_doc.path.to_string_lossy().to_string(),
-            object_count: loaded_doc.doc.objects.len(),
             metadata: loaded_doc.metadata
         }
     }).collect();

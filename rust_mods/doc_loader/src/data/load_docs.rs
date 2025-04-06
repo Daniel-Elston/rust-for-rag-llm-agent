@@ -1,7 +1,6 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::error::Error;
-// use pdf_extract;
 use lopdf::Document;
 use std::collections::HashMap;
 
@@ -11,8 +10,6 @@ use crate::config::DATA_DIR;
 
 #[derive(Debug)]
 pub struct LoadedDoc {
-    pub path: PathBuf,
-    pub doc: Document,
     pub page_content: String,
     pub metadata: HashMap<String, String>,
 }
@@ -44,7 +41,6 @@ fn load_pdfs_from_dir(
 
         if path.extension().map_or(false, |ext| ext == "pdf") {
             let doc = Document::load(&path)?;
-            // let page_content = pdf_extract::extract_text(&path)?;
             let page_content = extract_text_from_document(&doc)?;
             log::info!("Loaded document: {}", path.display());
 
@@ -54,8 +50,6 @@ fn load_pdfs_from_dir(
             metadata.insert("page_count".to_string(), doc.get_pages().len().to_string());
 
             docs.push(LoadedDoc {
-                path,
-                doc, 
                 page_content,
                 metadata
             });
@@ -77,8 +71,8 @@ pub fn run() -> Result<Vec<LoadedDoc>, Box<dyn Error>> {
         log::info!(
             "Document {} has {} pages\nPath: {}\n",
             i,
-            loaded_doc.doc.objects.len(),
-            loaded_doc.path.display(),
+            loaded_doc.metadata.get("page_count").unwrap(),
+            loaded_doc.metadata.get("source_file").unwrap(),
         );
     }
     Ok(docs)

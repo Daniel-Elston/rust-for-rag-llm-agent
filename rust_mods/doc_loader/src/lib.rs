@@ -2,8 +2,8 @@ mod config;
 mod data;
 mod pipeline;
 mod utils;
-use env_logger::{Builder, Env};
 
+use env_logger::{Builder, Env};
 use pyo3::prelude::*;
 
 
@@ -16,7 +16,7 @@ fn init_logging() {
     builder.init();
 }
 
-#[pyfunction] // Expose to Python
+#[pyfunction]
 fn run_document_pipeline() -> PyResult<()> {
     init_logging();
 

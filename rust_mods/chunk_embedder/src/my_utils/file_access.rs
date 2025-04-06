@@ -43,7 +43,7 @@ pub fn load() -> Result<Vec<SerializableDoc>, Box<dyn Error>> {
 }
 
 pub fn save(embeddings: Vec<DocumentEmbedding>) -> Result<(), Box<dyn Error>> {
-    let output_path = Path::new(DATA_DIR).join("embeddings/embeddings.json");
+    let output_path = Path::new(DATA_DIR).join("processed/embeddings.json");
     log::info!("Saving {} embeddings to: {:?}", embeddings.len(), output_path);
     save_embeddings(embeddings, output_path.to_str().unwrap())?;
     Ok(())

@@ -46,7 +46,7 @@ class StepRegistry:
     def get_definition_func(cls, defs_key: str, *args, **kwargs) -> Callable:
         try:
             func = cls._definitions[defs_key]
-            logging.warning(f"Registering orchestration step: ``{defs_key}``, for func: ``{func.__name__}``")
+            logging.info(f"Registering orchestration step: ``{defs_key}``, for func: ``{func.__name__}``")
             return func(*args, **kwargs)
         except:
             args = dict(*args)

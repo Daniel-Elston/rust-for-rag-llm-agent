@@ -1,19 +1,17 @@
 from __future__ import annotations
 
+import attr
 import re
 import unicodedata
 
 from config.pipeline_context import PipelineContext
 from src.core.data_handling.data_module import DataModule
-from dataclasses import dataclass
 
 
-@dataclass
+@attr.s
 class Document:
-    page_content: str
-    object_count: int
-    source_file: str
-    metadata: dict
+    page_content: str = attr.ib()
+    metadata: dict = attr.ib()
 
 
 class ProcessDocuments:

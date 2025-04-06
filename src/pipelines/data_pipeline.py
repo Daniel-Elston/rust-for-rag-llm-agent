@@ -9,7 +9,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from src.pipelines.steps import prepare_raw_steps
 from src.pipelines.steps import chunk_doc_steps
 from src.pipelines.steps import embed_doc_steps
-import rust_chunk_embedder
 
 
 class DataPipeline(BasePipeline):
@@ -47,12 +46,3 @@ class DataPipeline(BasePipeline):
             checkpoints=[self.order.get("chunk")],
             text_splitter=self.text_splitter,
         )
-    
-    def embed_docs(self):
-        rust_chunk_embedder.run_embedding_pipeline()
-    #     self.build_pipeline(
-    #         def_key="embed-docs",
-    #         modules=self.modules,
-    #         step_order=[self.order.get("embed")],
-    #         checkpoints=[self.order.get("embed")],
-    #     )

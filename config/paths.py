@@ -18,11 +18,11 @@ paths_store = {
     "raw-t2": Path("data/raw/test-m2.pdf"),
     "raw-x1": "2501.09079",
     "raw-x2": "2501.08476",
-    # "raw-docs-all": Path("data/sdo/raw-docs-all.pkl"),
+    # Processed
     "raw-docs-all": Path("data/sdo/rs-docs.pkl"),
     "processed-docs-all": Path("data/processed/processed-docs-all.pkl"),
     "chunked-docs-all": Path("data/processed/chunked_docs.json"),
-    "embeddings-docs-all": Path("data/embeddings/embeddings.json"),
+    "embeddings-docs-all": Path("data/processed/embeddings.json"),
     # Outputs
     "raw-doc-metadata": Path("reports/outputs/raw-doc-metadata.txt"),
     "sample-chunks": Path("reports/outputs/sample-chunks.txt"),

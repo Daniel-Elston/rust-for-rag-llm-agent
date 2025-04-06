@@ -10,6 +10,7 @@ from src.pipelines.data_pipeline import DataPipeline
 
 from src.pipelines.steps.steps_debugger import debug_steps
 from utils.project_setup import initialise_project_configs
+import rust_chunk_embedder
 
 
 class MainPipeline:
@@ -21,7 +22,8 @@ class MainPipeline:
         steps = [
             DataPipeline(self.ctx).process_docs,
             DataPipeline(self.ctx).chunk_docs,
-            DataPipeline(self.ctx).embed_docs,
+            rust_chunk_embedder.run_embedding_pipeline
+            
         ]
         StepExecutor(self.ctx).run_main(steps)
 

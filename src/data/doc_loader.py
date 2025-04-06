@@ -9,6 +9,7 @@ from config.settings import Config
 import rust_doc_loader
 from pprint import pprint, pformat
 
+
 class DocumentLoader:
     """
     Summary: Load all raw documents from local dir or arxiv

@@ -29,5 +29,5 @@ def debug_steps():
 
     json_output = json.dumps(ordered_steps, indent=4)
     path = Path("src/pipelines/steps/steps_metadata.json")
-    logging.warning(f"\n{json_output}\nSaving Output File: ``{path}``")
     FileAccess.save_json(ordered_steps, path, overwrite=True)
+    logging.warning(f"Workflow Steps:\n{"=" * 125}\n{json_output}\nOutput Saved: ``{path}``\n{"=" * 125}\n")
