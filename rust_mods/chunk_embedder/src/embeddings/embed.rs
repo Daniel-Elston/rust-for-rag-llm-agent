@@ -20,6 +20,8 @@ pub fn run(chunks: Vec<SerializableDoc>) -> Result<Vec<DocumentEmbedding>, Box<d
         if let Some(embedding_vector) = embedding_results.first() {
             embedding_entries.push(DocumentEmbedding {
                 doc_id: doc_id as u32,
+                page_content: doc.page_content.clone(),
+                metadata: doc.metadata.unwrap_or_default(),
                 embedding: embedding_vector.clone(),
             });
         }

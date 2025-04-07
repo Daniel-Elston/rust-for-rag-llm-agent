@@ -47,7 +47,10 @@ class StepExecutor:
 
     def run_step(self, step_name: str, **runtime_extra):
         StepClass, method, args = self.step_utils.resolve_args(step_name, **runtime_extra)
-        instance = StepClass(ctx=self.ctx, **args)
+        try:
+            instance = StepClass(ctx=self.ctx, **args)
+        except TypeError:
+            instance = StepClass
         method = getattr(instance, method)
         return log_step()(method)()
 

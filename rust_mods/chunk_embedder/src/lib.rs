@@ -2,9 +2,11 @@ use pyo3::prelude::*;
 use env_logger::{Builder, Env};
 
 mod config;
-mod embeddings;
 mod my_utils;
 mod pipeline;
+mod embeddings;
+mod indexing;
+
 
 fn init_logging() -> PyResult<()> {
     let env = Env::default().default_filter_or("info");

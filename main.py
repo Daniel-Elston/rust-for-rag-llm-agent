@@ -7,10 +7,10 @@ from config.pipeline_context import PipelineContext
 from src.core.step_handling.step_executor import StepExecutor
 
 from src.pipelines.data_pipeline import DataPipeline
+from src.pipelines.vector_pipeline import EmbeddingPipeline
 
 from src.pipelines.steps.steps_debugger import debug_steps
 from utils.project_setup import initialise_project_configs
-import rust_chunk_embedder
 
 
 class MainPipeline:
@@ -22,7 +22,8 @@ class MainPipeline:
         steps = [
             DataPipeline(self.ctx).process_docs,
             DataPipeline(self.ctx).chunk_docs,
-            rust_chunk_embedder.run_embedding_pipeline
+            EmbeddingPipeline(self.ctx).embed_docs,
+            EmbeddingPipeline(self.ctx).store_embeddings,
             
         ]
         StepExecutor(self.ctx).run_main(steps)

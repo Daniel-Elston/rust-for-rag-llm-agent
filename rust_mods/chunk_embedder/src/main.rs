@@ -2,6 +2,7 @@ mod config;
 mod my_utils;
 mod pipeline;
 mod embeddings;
+mod indexing;
 
 use env_logger::{Builder, Env};
 

@@ -21,7 +21,7 @@ class Params:
     max_input_seq_length: int = attr.ib(default=512)
     max_output_seq_length: int = attr.ib(default=512)
     separators: list = attr.ib(default=["\n\n", "\n", ".", ";", ",", " ", ""])
-    embedding_model_name: str = attr.ib(default="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings_model_name: str = attr.ib(default="sentence-transformers/all-MiniLM-L6-v2")
     language_model_name: str = attr.ib(default="google/flan-t5-base")
 
 

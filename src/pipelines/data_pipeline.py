@@ -8,7 +8,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 # Ensure to import src/pipeline/steps/*_steps.py at top of *_pipeline.py:
 from src.pipelines.steps import prepare_raw_steps
 from src.pipelines.steps import chunk_doc_steps
-from src.pipelines.steps import embed_doc_steps
+
 
 
 class DataPipeline(BasePipeline):
@@ -19,7 +19,8 @@ class DataPipeline(BasePipeline):
             'raw-docs-all': self.dm_handler.get_dm('raw-docs-all'),
             'processed-docs-all': self.dm_handler.get_dm('processed-docs-all'),
             'chunked-docs-all': self.dm_handler.get_dm('chunked-docs-all'),
-            'embeddings-docs-all': self.dm_handler.get_dm('chunked-docs-all'),
+            'embeddings-docs-all': self.dm_handler.get_dm('embeddings-docs-all'),
+            'faiss-index': self.dm_handler.get_dm('faiss-index'),
         }
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.params.chunk_size,

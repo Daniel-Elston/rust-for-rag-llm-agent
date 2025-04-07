@@ -10,6 +10,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import pickle
+import faiss
 
 
 class FileAccess:
@@ -34,13 +35,16 @@ class FileAccess:
         elif suffix == ".joblib":
             return joblib.load(path)
         elif suffix == ".json":
-            return pd.read_json(path, orient="index")
+            # return pd.read_json(path, orient="index")
+            return FileAccess.load_json(path)
         elif suffix == ".pkl":
             return pickle.load(open(path, "rb"))
         elif suffix == ".msgpack": # Add support for .msgpack extension
             return FileAccess.load_msgpack(path)
         elif suffix == ".pdf":
             pass
+        elif suffix == ".index":
+            return faiss.read_index(str(path))
         else:
             raise ValueError(f"Unknown file type: {suffix}")
 
