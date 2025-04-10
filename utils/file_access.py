@@ -67,6 +67,8 @@ class FileAccess:
                 return df.to_json(path, orient="records", indent=4)
             elif isinstance(df, List):
                 return FileAccess.save_json(df, path)
+            elif isinstance(df, dict):
+                return FileAccess.save_json(df, path)
         elif suffix == ".pkl":
             return pickle.dump(df, open(path, "wb"))
         elif suffix == ".txt":
@@ -86,7 +88,7 @@ class FileAccess:
             return json.load(file)
 
     @staticmethod
-    def save_json(data, path, overwrite=False):
+    def save_json(data, path, overwrite=True):
         if overwrite is False and Path(path).exists():
             pass
         else:
@@ -94,7 +96,7 @@ class FileAccess:
                 json.dump(data, file)
 
     @staticmethod
-    def save_msgpack(data: List[dict], path: Path, overwrite=False):
+    def save_msgpack(data: List[dict], path: Path, overwrite=True):
         """Saves data to a MessagePack file."""
         if overwrite is False and Path(path).exists():
             pass
@@ -107,5 +109,5 @@ class FileAccess:
     def load_msgpack(path: Path):
         """Loads data from a MessagePack file."""
         with open(path, "rb") as file:
-            unpacked_data = msgpack.unpackb(file.read(), raw=False)
+            unpacked_data = msgpack.unpackb(file.read(), raw=True)
             return unpacked_data

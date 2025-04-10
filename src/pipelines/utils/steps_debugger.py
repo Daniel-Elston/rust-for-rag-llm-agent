@@ -8,7 +8,7 @@ from src.core.step_handling.step_registry import StepRegistry
 from utils.file_access import FileAccess
 
 from config.orchestration import STEP_ORCHESTRATION
-
+from pprint import pprint
 
 def debug_steps():
     steps_metadata = StepRegistry.list_all_steps()
@@ -16,7 +16,7 @@ def debug_steps():
     ordered_steps = []
     for idx, step in enumerate(STEP_ORCHESTRATION["step-defs"], start=0):
         step_metadata = steps_metadata.get(step, [])
-        
+
         for entry in step_metadata:
             if "step_class" in entry and isinstance(entry["step_class"], type):
                 entry["step_class"] = f"{entry['step_class'].__module__}.{entry['step_class'].__qualname__}"
@@ -28,6 +28,6 @@ def debug_steps():
         })
 
     json_output = json.dumps(ordered_steps, indent=4)
-    path = Path("src/pipelines/steps/steps_metadata.json")
+    path = Path("src/pipelines/utils/steps_metadata.json")
     FileAccess.save_json(ordered_steps, path, overwrite=True)
     logging.warning(f"Workflow Steps:\n{"=" * 125}\n{json_output}\nOutput Saved: ``{path}``\n{"=" * 125}\n")

@@ -6,12 +6,13 @@ import time
 from config.pipeline_context import PipelineContext
 from src.core.step_handling.step_executor import StepExecutor
 
-from src.pipelines.data_pipeline import DataPipeline
-from src.pipelines.vector_pipeline import EmbeddingPipeline
+from src.pipelines.data.data_pipeline import DataPipeline
+from src.pipelines.vector.vector_pipeline import VectorPipeline
+from src.pipelines.rag.rag_pipeline import RAGPipeline
 
-from src.pipelines.steps.steps_debugger import debug_steps
+from src.pipelines.utils.steps_debugger import debug_steps
 from utils.project_setup import initialise_project_configs
-
+import rust_chunk_embedder
 
 class MainPipeline:
     def __init__(self, ctx: PipelineContext):
@@ -20,11 +21,10 @@ class MainPipeline:
     def run(self):
         """ETL pipeline main entry point."""
         steps = [
-            DataPipeline(self.ctx).process_docs,
-            DataPipeline(self.ctx).chunk_docs,
-            EmbeddingPipeline(self.ctx).embed_docs,
-            EmbeddingPipeline(self.ctx).store_embeddings,
-            
+            # DataPipeline(self.ctx).load_process_raw_docs,
+            # DataPipeline(self.ctx).chunk_docs,
+            # VectorPipeline(self.ctx).embed_index_chunked_docs,
+            RAGPipeline(self.ctx).response,
         ]
         StepExecutor(self.ctx).run_main(steps)
 
@@ -39,4 +39,4 @@ if __name__ == "__main__":
         end_t = time.perf_counter()
         logging.warning(f"Pipeline executed in {(end_t - start_t):.3f} seconds.")
     except Exception as e:
-        logging.error(f"{e}", exc_info=True)
+        logging.error(f"{e}", exc_info=False)

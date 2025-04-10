@@ -65,6 +65,9 @@ class StepExecutor:
             if step_name in checkpoints:
                 logging.info(f"SAVING at checkpoint: ``{step_name}``")
                 self.dm_handler.save_data(result)
+            if result:
+                # logging.debug(f"Result of {step_name}: {result}")
+                return result
 
     def run_main(self, steps: List[Callable]):
         """Applies log_step decorator to each step and executes in sequence."""

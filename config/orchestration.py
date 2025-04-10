@@ -1,16 +1,21 @@
-
+# step-defs must be unique per *_steps.py script.
+# step-order must be unique per StepDefinition object.
 STEP_ORCHESTRATION = {
     "step-defs": {
-        "process-docs": "process-docs", # includes loading step
+        "process-raw-docs": "process-raw-docs", # includes loading step
         "chunk-docs": "chunk-docs",
-        "embed-docs": "embed-docs",
-        "store-embeddings": "store-embeddings",
+        "embed-index-docs": "embed-index-docs",
+        "load-vector-store": "load-vector-store",
+        "RAG": "RAG",
+        "RAG-response": "RAG-response",
     },
     "step-order": {
-        "load": "load",
+        "load-raw": "load-raw",
         "process": "process",
         "chunk": "chunk",
-        "embed": "embed",
-        "faiss-store": "faiss-store",
+        "embed-index": "embed-index",
+        "load-store": "load-store",
+        "retrieval": "retrieval",
+        "response": "response",
     }
 }

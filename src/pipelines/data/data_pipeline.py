@@ -5,9 +5,9 @@ from src.core.base_pipeline import BasePipeline
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Ensure to import src/pipeline/steps/*_steps.py at top of *_pipeline.py:
-from src.pipelines.steps import prepare_raw_steps
-from src.pipelines.steps import chunk_doc_steps
+# Ensure to import src/pipeline/steps/*_steps.py in *_pipeline.py:
+from src.pipelines.data import step_process_docs
+from src.pipelines.data import step_chunk_docs
 
 
 
@@ -28,12 +28,12 @@ class DataPipeline(BasePipeline):
             separators=self.params.separators,
         )
 
-    def process_docs(self):
+    def load_process_raw_docs(self):
         self.build_pipeline(
-            def_key="process-docs",
+            def_key="process-raw-docs",
             modules=self.modules,
             step_order=[
-                self.order.get("load"),
+                self.order.get("load-raw"),
                 self.order.get("process")
             ],
             checkpoints=[self.order.get("process")],
@@ -45,5 +45,7 @@ class DataPipeline(BasePipeline):
             modules=self.modules,
             step_order=[self.order.get("chunk")],
             checkpoints=[self.order.get("chunk")],
-            text_splitter=self.text_splitter,
+            step_kwargs={
+                "text_splitter": self.text_splitter,
+            },
         )

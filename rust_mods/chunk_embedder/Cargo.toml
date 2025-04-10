@@ -10,10 +10,16 @@ crate-type = ["cdylib"]
 [dependencies]
 env_logger = "0.11.7"
 log = "0.4.27"
+rayon = "1.8"
+anyhow = "1.0.97"
 serde = { version = "1.0", features = ["derive"] }
 serde-pickle = "1.2.0"
 serde_json = "1.0"
-rust-bert = "0.23.0"
-tch = "0.17.0"
 pyo3 = { version = "0.20", features = ["extension-module"] }
 "faiss" = {version = "0.12.1", features = ["gpu"]}
+
+candle-core = "0.8.4"
+candle-nn = "0.8.4"
+candle-transformers = "0.8.4"
+hf-hub = "0.4.2"
+tokenizers = "0.15.0"

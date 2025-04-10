@@ -5,7 +5,6 @@ from src.core.step_handling.step_definition import StepDefinition
 from src.core.step_handling.step_registry import StepBuilder
 
 from src.data.chunk import ChunkDocuments
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 @StepBuilder.build(
@@ -16,14 +15,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
     args={"dataset": "processed-docs-all", "text_splitter": "RecursiveCharacterTextSplitter"},
     outputs=["chunked-docs-all"]
 )
-def chunk_documents(modules: dict, text_splitter: RecursiveCharacterTextSplitter) -> list[StepDefinition]:
+def chunk_docs_steps(modules: dict, step_kwargs: dict) -> list[StepDefinition]:
     return [
         StepDefinition(
             order_name="chunk",
             step_class=ChunkDocuments,
             args={
                 "dataset": LazyLoad(dm=modules.get("processed-docs-all")),
-                "text_splitter": text_splitter,
+                "text_splitter": step_kwargs.get("text_splitter"),
             },
             outputs=["chunked-docs-all"],
         ),

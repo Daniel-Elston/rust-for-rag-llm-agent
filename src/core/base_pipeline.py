@@ -85,4 +85,4 @@ class BasePipeline(ABC):
         )
         executor = StepExecutor(self.ctx)
         executor.add_steps(step_defs)
-        executor.run_pipeline(step_order, checkpoints)
+        return executor.run_pipeline(step_order, checkpoints)

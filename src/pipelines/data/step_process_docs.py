@@ -9,7 +9,7 @@ from src.data.doc_loader import DocumentLoader
 
 
 @StepBuilder.build(
-    definition="process-docs", 
+    definition="process-raw-docs", 
     order_idx=1,
     order_name="process",
     step_class=ProcessDocuments,
@@ -17,17 +17,17 @@ from src.data.doc_loader import DocumentLoader
     outputs=["processed-docs-all"]
 )
 @StepBuilder.build(
-    definition="process-docs",
+    definition="process-raw-docs",
     order_idx=0,
-    order_name="load",
+    order_name="load-raw",
     step_class=DocumentLoader,
     args={"paths": "raw-paths"},
     outputs=["raw-docs-all"]
 )
-def process_step(modules: dict) -> list[StepDefinition]:
+def load_process_raw_docs_step(modules: dict) -> list[StepDefinition]:
     return [
         StepDefinition(
-            order_name="load",
+            order_name="load-raw",
             step_class=DocumentLoader,
             args={"paths": modules["raw-paths"]},
             outputs=["raw-docs-all"]
