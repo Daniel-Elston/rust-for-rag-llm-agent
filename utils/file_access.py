@@ -45,6 +45,9 @@ class FileAccess:
             pass
         elif suffix == ".index":
             return faiss.read_index(str(path))
+        elif suffix == ".txt":
+            with open(path, "r", encoding="utf-8") as f:
+                return f.read()
         else:
             raise ValueError(f"Unknown file type: {suffix}")
 

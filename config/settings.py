@@ -21,9 +21,11 @@ class Params:
     max_input_seq_length: int = attr.ib(default=512)
     max_output_seq_length: int = attr.ib(default=512)
     separators: list = attr.ib(default=["\n\n", "\n", ".", ";", ",", " ", ""])
-    embeddings_model_name: str = attr.ib(default="sentence-transformers/all-MiniLM-L6-v2")
+    embedding_model_name: str = attr.ib(default="sentence-transformers/all-MiniLM-L6-v2")
     language_model_name: str = attr.ib(default="google/flan-t5-base")
-
+    
+    prompt_key: int = attr.ib(default=0)
+    retriever_k: int = attr.ib(default=2)
 
 @attr.s
 class HyperParams:

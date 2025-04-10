@@ -24,11 +24,14 @@ paths_store = {
     "chunked-docs-all": Path("data/processed/chunked_docs.json"),
     "embeddings-docs-all": Path("data/processed/embeddings.json"),
     "faiss-index": Path("data/processed/faiss_index.index"),
+    # Inputs
+    "input-prompts": Path("prompts/inputs/input_prompts.json"),
+    "prompt-template": Path("prompts/inputs/prompt_template.txt"),
     # Outputs
     "raw-doc-metadata": Path("reports/outputs/raw-doc-metadata.txt"),
     "sample-chunks": Path("reports/outputs/sample-chunks.txt"),
     "embeddings_sample": Path("reports/outputs/embeddings_sample.txt"),
-    "generated-answers": Path("reports/results/generated-answers.json"),
+    "generated-answers": Path("prompts/outputs/generated-answers.json"),
 }
 
 

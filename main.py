@@ -24,7 +24,8 @@ class MainPipeline:
             # DataPipeline(self.ctx).load_process_raw_docs,
             # DataPipeline(self.ctx).chunk_docs,
             # VectorPipeline(self.ctx).embed_index_chunked_docs,
-            RAGPipeline(self.ctx).response,
+            RAGPipeline(self.ctx).retrieval,
+            # RAGPipeline(self.ctx).response,
         ]
         StepExecutor(self.ctx).run_main(steps)
 

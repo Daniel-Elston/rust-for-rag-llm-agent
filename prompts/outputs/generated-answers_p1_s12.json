@@ -1,0 +1,81 @@
+{
+    "response": {
+        "query": "Give a summary of challenges in quantum computing.",
+        "answer": "The challenges in quantum computing are overcoming the in- evitable noise in qubits.",
+        "metadata": [
+            {
+                "index": 0,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 1,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 2,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 3,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 4,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 5,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 6,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 7,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 8,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 9,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            },
+            {
+                "index": 10,
+                "source": "data/raw/modeling-entanglement-based-quantum-key-distribution-for-the-nasa-quantum-comms-analysis-suite-2501.08476v1.pdf",
+                "page_count": "9",
+                "object_count": "350"
+            },
+            {
+                "index": 11,
+                "source": "data/raw/demonstrating-quantum-error-mitigation-on-logical-qubits-2501.09079v1.pdf",
+                "page_count": "18",
+                "object_count": "1878"
+            }
+        ]
+    },
+    "model": "google/flan-t5-base"
+}

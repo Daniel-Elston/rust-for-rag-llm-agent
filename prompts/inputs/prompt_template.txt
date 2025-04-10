@@ -1,0 +1,12 @@
+
+"""
+Context information:
+{context}
+
+Sources:
+{sources}
+
+User Question: {question}
+
+Provide a concise summary based on the context above. Include relevant source information in your response.
+"""

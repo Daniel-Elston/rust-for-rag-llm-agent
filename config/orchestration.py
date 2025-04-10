@@ -6,8 +6,8 @@ STEP_ORCHESTRATION = {
         "chunk-docs": "chunk-docs",
         "embed-index-docs": "embed-index-docs",
         "load-vector-store": "load-vector-store",
+        "load-llm": "load-llm",
         "RAG": "RAG",
-        "RAG-response": "RAG-response",
     },
     "step-order": {
         "load-raw": "load-raw",
@@ -15,7 +15,7 @@ STEP_ORCHESTRATION = {
         "chunk": "chunk",
         "embed-index": "embed-index",
         "load-store": "load-store",
+        "load-model": "load-model",
         "retrieval": "retrieval",
-        "response": "response",
     }
 }

@@ -7,7 +7,7 @@ from config.pipeline_context import PipelineContext
 from config.settings import Params
 
 
-class BuildHFPipeline:
+class BuildLanguageModel:
     """
     Summary:
         Generates text using a Hugging Face LLM.\n
@@ -21,22 +21,19 @@ class BuildHFPipeline:
 
     def __init__(
         self, ctx: PipelineContext,
+        llm: AutoModelForSeq2SeqLM,
+        tokenizer: AutoTokenizer,
     ):
         self.ctx = ctx
         self.params: Params = ctx.settings.params
+        self.llm = llm
+        self.tokenizer = tokenizer
 
     def build(self):
-        language_model_name = self.params.language_model_name
-        tokenizer = AutoTokenizer.from_pretrained(
-            language_model_name,
-            truncation=self.params.truncation,
-            model_max_length=self.params.max_input_seq_length,
-        )
-        model = AutoModelForSeq2SeqLM.from_pretrained(language_model_name)
         hf_pipeline = pipeline(
             "text2text-generation",
-            model=model,
-            tokenizer=tokenizer,
+            model=self.llm,
+            tokenizer=self.tokenizer,
             max_length=self.params.max_output_seq_length,
         )
         return HuggingFacePipeline(pipeline=hf_pipeline)
