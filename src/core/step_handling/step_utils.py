@@ -6,7 +6,6 @@ from src.core.step_handling.step_definition import StepDefinition
 from src.core.data_handling.lazy_load import LazyLoad
 from src.core.data_handling.data_module_handler import DataModuleHandler
 
-
 class StepUtils:
     """
     Summary

@@ -48,11 +48,8 @@ class StepRegistry:
             func = cls._definitions[defs_key]
             logging.info(f"Registering orchestration step: ``{defs_key}``, for func: ``{func.__name__}``")
             return func(*args, **kwargs)
-        except:
-            args = dict(*args)
-            available_defs = list(cls._definitions.keys())
-            available_paths = list(args.keys())
-            raise KeyError(f"Unknown key input for defs or modules. Available definitions: {available_defs}. Available module keys: {available_paths}")
+        except Exception as e:
+            logging.error(f"Error: {e}", exc_info=True)
 
     @classmethod
     def list_all_steps(cls) -> Dict[str, List[Dict[str, Any]]]:
@@ -81,7 +78,7 @@ class StepBuilder:
                 step_class=step_class,
                 args=args,
                 outputs=outputs,
-                is_definition=True  # marks as def fn
+                is_definition=True
             )
             @wraps(fn)
             def wrapped(*args, **kwargs):

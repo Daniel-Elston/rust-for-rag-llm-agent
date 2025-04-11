@@ -62,8 +62,8 @@ class BasePipeline(ABC):
     
     def build_pipeline(
         self, def_key:str,
-        modules: Dict,
         step_order: List[str],
+        modules: Dict = None,
         checkpoints: List[str] = None,
         **step_kwargs
     ):
@@ -77,12 +77,14 @@ class BasePipeline(ABC):
             checkpoints: Steps where data should be persisted
             step_kwargs: Additional arguments for step definitions
         """
-        checkpoints = checkpoints or []
+        modules = modules if modules else None
         step_defs = StepRegistry.get_definition_func(
             self.defs.get(def_key),
             modules,
             **step_kwargs
         )
+        step_order = [self.order.get(step) for step in step_order]
+        checkpoints = [self.order.get(point) for point in checkpoints] if checkpoints else []
         executor = StepExecutor(self.ctx)
         executor.add_steps(step_defs)
         return executor.run_pipeline(step_order, checkpoints)

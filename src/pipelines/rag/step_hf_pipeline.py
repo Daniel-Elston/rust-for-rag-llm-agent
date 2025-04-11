@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from src.core.types import RAGPipelineModules
 from src.core.step_handling.step_definition import StepDefinition
 from src.core.step_handling.step_registry import StepBuilder
 
@@ -14,7 +15,7 @@ from src.models.llm import BuildLanguageModel
     args={},
     outputs=["hf_pipeline: HuggingFacePipeline"],
 )
-def build_language_model_step(_, step_kwargs: dict) -> list[StepDefinition]:
+def build_language_model_step(modules: RAGPipelineModules, step_kwargs: dict) -> list[StepDefinition]:
     return [
         StepDefinition(
             order_name="load-model",

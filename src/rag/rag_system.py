@@ -50,7 +50,6 @@ class RAGSystem:
         return {"generated-answers": response}
         
     def build_rag_system(self):
-        # Get runnable components
         retrieval_step = self.retriever.as_runnable()
         processing_step = self.processor.as_runnable()
         generation_step = self.generator.as_runnable()

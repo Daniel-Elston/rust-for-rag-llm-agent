@@ -2,50 +2,43 @@ from __future__ import annotations
 
 from config.pipeline_context import PipelineContext
 from src.core.base_pipeline import BasePipeline
+from src.core.types import DataPipelineModules
+from src.pipelines.data.dependencies import DataPipelineDependencies
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-# Ensure to import src/pipeline/steps/*_steps.py in *_pipeline.py:
+# Ensure to import step_*.py:
 from src.pipelines.data import step_process_docs
 from src.pipelines.data import step_chunk_docs
 
 
 
 class DataPipeline(BasePipeline):
+    modules: DataPipelineModules
+    
     def __init__(self, ctx: PipelineContext):
         super().__init__(ctx)
-        self.modules = {
-            'raw-paths': self.paths,
-            'raw-docs-all': self.dm_handler.get_dm('raw-docs-all'),
-            'processed-docs-all': self.dm_handler.get_dm('processed-docs-all'),
-            'chunked-docs-all': self.dm_handler.get_dm('chunked-docs-all'),
-            'embeddings-docs-all': self.dm_handler.get_dm('embeddings-docs-all'),
-            'faiss-index': self.dm_handler.get_dm('faiss-index'),
-        }
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.params.chunk_size,
-            chunk_overlap=self.params.chunk_overlap,
-            separators=self.params.separators,
+        self.modules = DataPipelineModules(
+            raw_paths=self.paths,
+            raw_docs_all=self.dm_handler.get_dm('raw-docs-all'),
+            processed_docs_all=self.dm_handler.get_dm('processed-docs-all'),
         )
+        self.text_splitter = DataPipelineDependencies.load_text_splitter(self.params)
 
     def load_process_raw_docs(self):
         self.build_pipeline(
             def_key="process-raw-docs",
             modules=self.modules,
             step_order=[
-                self.order.get("load-raw"),
-                self.order.get("process")
+                "load-raw",
+                "process"
             ],
-            checkpoints=[self.order.get("process")],
+            checkpoints=["process"],
         )
 
     def chunk_docs(self):
         self.build_pipeline(
             def_key="chunk-docs",
             modules=self.modules,
-            step_order=[self.order.get("chunk")],
-            checkpoints=[self.order.get("chunk")],
-            step_kwargs={
-                "text_splitter": self.text_splitter,
-            },
+            step_order=["chunk"],
+            checkpoints=["chunk"],
+            step_kwargs={"text_splitter": self.text_splitter},
         )

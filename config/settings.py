@@ -15,6 +15,7 @@ class Config:
 
 @attr.s
 class Params:
+    device: str = attr.ib(default="cpu")
     chunk_size: int = attr.ib(default=1000)
     chunk_overlap: int = attr.ib(default=50)
     truncation: bool = attr.ib(default=True)
