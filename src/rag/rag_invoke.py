@@ -19,22 +19,31 @@ class InvokeRAG:
 
     def __init__(
         self, ctx: PipelineContext,
-        rag_pipeline: RunnableSequence,
+        input_prompts: list,
+        rag_system: RunnableSequence
     ):
         self.ctx = ctx
-        self.rag_pipeline = rag_pipeline
         self.params: Params = ctx.settings.params
-
-    def invoke_response(self, query: str) -> Dict[str, Any]:
+        self.input_prompts: str = input_prompts[self.params.prompt_key]
+        self.rag_system = rag_system
+        
+    def invoke_response(self, query: str = None, save: bool = True) -> Dict[str, Any]:
         """Generate a response from the RAG pipeline for a given query."""
+        if query is None:
+            query = self.input_prompts
         try:
-            response = self.rag_pipeline.invoke({"query": query})
+            enhanced_query = query#.split('?')[0]
+            response = self.rag_system.invoke({"query": enhanced_query})
             logging.error(f"Answer: {response['result']}")
-            return {
+            response = {
                 "query": query,
                 "answer": response["result"],
                 "metadata": response.get("metadata", []),
                 "model": self.params.language_model_name,
             }
+            if save:
+                return {"generated-answers": response}
+            else:
+                return response
         except Exception as e:
             logging.error(f"Error generating response: {e}", exc_info=True)

@@ -41,9 +41,9 @@ def log_step(
 
             locate = f"`{script_name}.{class_name}.{func_name}`"
             if "Pipeline" in locate:
-                logging.info(f"STARTING {locate} INITIATING\n")
+                logging.info(f"[EXEC] {locate}\n")
             else:
-                logging.info(f"STARTING {locate} INITIATING")
+                logging.info(f"[EXEC] {locate}")
             start_time = time.time()
 
             try:
@@ -64,7 +64,7 @@ def log_step(
                             logging.info(f"{key}:\n{pformat(value)}")
                         else:
                             logging.info(f"{key}:\n{pformat(value)}")
-                logging.info(f"COMPLETED {locate} SUCCESSFULLY\n")
+                logging.info(f"[SUCCESS] {locate}\n")
                 return result
             except Exception as e:
                 logging.exception(f"Error in {locate}: {str(e)}")

@@ -7,7 +7,10 @@ STEP_ORCHESTRATION = {
         "embed-index-docs": "embed-index-docs",
         "load-vector-store": "load-vector-store",
         "load-llm": "load-llm",
-        "RAG": "RAG",
+        "RAG-system": "RAG-system",
+        "RAG-invoke": "RAG-invoke",
+        "RAG-memory": "RAG-memory",
+        "RAG-chat": "RAG-chat",
     },
     "step-order": {
         "load-raw": "load-raw",
@@ -16,6 +19,9 @@ STEP_ORCHESTRATION = {
         "embed-index": "embed-index",
         "load-store": "load-store",
         "load-model": "load-model",
-        "retrieval": "retrieval",
+        "build": "build",
+        "invoke": "invoke",
+        "build-memory": "build-memory",
+        "chat": "chat",
     }
 }

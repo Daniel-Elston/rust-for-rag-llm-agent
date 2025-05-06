@@ -79,8 +79,12 @@ impl SentenceModel {
                 .broadcast_mul(&weights)?
         };
 
-        let result = pooled.flatten_all()?.to_vec1()?;
-
+        let mut result = pooled.flatten_all()?.to_vec1()?;
+        let norm: f32 = result.iter().map(|x| x * x).sum::<f32>().sqrt();
+        if norm > 0.0 {
+            result.iter_mut().for_each(|x| *x /= norm);
+        }
+    
         Ok(result)
     }
 }

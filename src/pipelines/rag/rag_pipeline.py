@@ -2,67 +2,56 @@ from __future__ import annotations
 
 from config.pipeline_context import PipelineContext
 from src.core.base_pipeline import BasePipeline
-from src.core.types import RAGPipelineModules
-from src.pipelines.rag.dependencies import RAGPipelineDependencies
+from src.pipelines.rag.builder import RAGPipelineBuilder
+from src.core.types import RAGPipelineModules, RAGComponents
+from langchain_core.runnables.base import RunnableSequence
 
-from langchain_huggingface import HuggingFacePipeline
-from langchain_community.vectorstores import FAISS
-
-# Ensure to import step_*.py:
-from src.pipelines.rag import step_vector_store
-from src.pipelines.rag import step_hf_pipeline
-from src.pipelines.rag import step_retrieval
+from src.pipelines.rag import step_invoke
 
 
 class RAGPipeline(BasePipeline):
-    modules: RAGPipelineModules
-    
     def __init__(self, ctx: PipelineContext):
         super().__init__(ctx)
-        self.modules = RAGPipelineModules(
-            embeddings_docs_all=self.dm_handler.get_dm('embeddings-docs-all'),
-            faiss_index=self.dm_handler.get_dm('faiss-index'),
-            input_prompts=self.dm_handler.get_dm('input-prompts'),
-            prompt_template=self.dm_handler.get_dm('prompt-template'),
-        )
-        self.embedding_model = RAGPipelineDependencies.load_embedding_model(self.params)
-        self.tokenizer = RAGPipelineDependencies.load_tokenizer(self.params)
-        self.llm = RAGPipelineDependencies.load_llm(self.params)
-        
-        self.faiss_store: FAISS = self.load_vector_store()
-        self.hf_pipeline: HuggingFacePipeline = self.build_language_model()
-
-    def load_vector_store(self):
+        self.builder = RAGPipelineBuilder(ctx)
+    
+    @property
+    def modules(self) -> RAGPipelineModules:
+        return self.builder.modules
+    
+    @property
+    def components(self) -> RAGComponents:
+        return self.builder.components
+    
+    def invoke_rag_system(self) -> RunnableSequence:
+        # print(self.components["rag_system"].__repr__())
         return self.build_pipeline(
-            def_key="load-vector-store",
-            modules=self.modules,
-            step_order=["load-store"],
-            checkpoints=[],
-            step_kwargs={
-                "embedding_model": self.embedding_model,
-            }
+            def_key="RAG-invoke",
+            modules={"input_prompts": self.modules["input_prompts"]},
+            step_order=["invoke"],
+            checkpoints=["invoke"],
+            step_kwargs={"rag_system": self.components["rag_system"]}
         )
         
-    def build_language_model(self):
-        return self.build_pipeline(
-            def_key="load-llm",
-            step_order=["load-model"],
-            checkpoints=[],
-            step_kwargs={
-                "llm": self.llm,
-                "tokenizer": self.tokenizer,
-            }
-        )
+    # def build_rag_system_memory(self):
+    #     return self.build_pipeline(
+    #         def_key="RAG-memory",
+    #         modules=self.modules,
+    #         step_order=["build-memory"],
+    #         checkpoints=[],
+    #         step_kwargs={
+    #             "rag_system": self.rag_system,
+    #             "invoker": self.invoker
+    #         }
+    #     )
 
-    def retrieval(self):
-        return self.build_pipeline(
-            def_key="RAG",
-            modules=self.modules,
-            step_order=["retrieval"],
-            checkpoints=["retrieval"],
-            step_kwargs={
-                "faiss_store": self.faiss_store,
-                "hf_pipeline": self.hf_pipeline,
-            }
-        )
-
+    # def build_chat_dashboard(self):
+    #     return self.build_pipeline(
+    #         def_key="RAG-chat",
+    #         modules=self.modules,
+    #         step_order=["chat"],
+    #         checkpoints=[],
+    #         step_kwargs={
+    #             "convo_chain": RAGConversationalBuilder(self.ctx, self.rag_system, self.invoker),
+    #             # "convo_chain": self.convo_chain,
+    #         }
+    #     )

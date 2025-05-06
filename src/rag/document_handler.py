@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 from operator import itemgetter
 from typing import List, Dict, Any
 
@@ -15,21 +17,28 @@ from langchain_core.vectorstores.base import VectorStoreRetriever
 class DocumentRetriever:
     def __init__(
         self, ctx: PipelineContext,
-        vector_store: FAISS
+        vector_store: FAISS,
     ):
         self.ctx = ctx
         self.params: Params = ctx.settings.params
-        self.retriever: VectorStoreRetriever = vector_store.as_retriever(
-            search_kwargs={"k": self.params.retriever_k}
-        )
-    
+        self.vector_store = vector_store
+            
+
     def retrieve(self, query: str) -> Dict[str, Any]:
-        documents = self.retriever.invoke(query)
+        docs_with_scores = self.vector_store.similarity_search_with_score(query, k=120, sort=True)
+        docs_list = list(docs_with_scores)        
+        # docs_list.sort(key=lambda x: x[1], reverse=False)
+        filtered_docs = [doc for doc, score in docs_list[:self.params.retriever_k]]
+        
+        # Debug
+        for i, (doc, score) in enumerate(docs_list[:self.params.retriever_k]):
+            logging.debug(f"Rank {i+1} (Distance={score:.6f}): {doc.page_content}\n")
+            
         return {
-            "docs": documents,
+            "docs": filtered_docs,
             "question": query
         }
-    
+        
     def as_runnable(self) -> RunnableLambda:
         return RunnableLambda(
             lambda inputs: self.retrieve(inputs["query"]),

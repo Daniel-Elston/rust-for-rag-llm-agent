@@ -1,4 +1,6 @@
 use pyo3::prelude::*;
+use pyo3::wrap_pyfunction;
+
 use env_logger::{Builder, Env};
 
 mod config;
@@ -32,8 +34,14 @@ fn run_embedding_pipeline() -> PyResult<()> {
     Ok(())
 }
 
+// #[pymodule]
+// fn rust_chunk_embedder(_py: Python, m: &PyModule) -> PyResult<()> {
+//     m.add_function(wrap_pyfunction!(run_embedding_pipeline, m)?)?;
+//     Ok(())
+// }
+
 #[pymodule]
-fn rust_chunk_embedder(_py: Python, m: &PyModule) -> PyResult<()> {
+fn rust_chunk_embedder(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_embedding_pipeline, m)?)?;
     Ok(())
 }

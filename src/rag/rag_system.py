@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-from typing import Dict, Any
-
 from config.settings import Params
 from config.pipeline_context import PipelineContext
 
 from src.rag.document_handler import DocumentRetriever, DocumentProcessor
 from src.rag.response_handler import ResponseGenerator, ResponseFormatter
-from src.rag.rag_invoke import InvokeRAG
-
-from langchain_huggingface import HuggingFacePipeline
-from langchain_community.vectorstores import FAISS
 
 
 class RAGSystem:
@@ -29,27 +23,19 @@ class RAGSystem:
     """
     def __init__(
         self, ctx: PipelineContext,
-        faiss_store: FAISS,
-        hf_pipeline: HuggingFacePipeline,
-        prompt_template: str,
-        input_prompts: list,
+        retriever: DocumentRetriever,
+        processor: DocumentProcessor,
+        generator: ResponseGenerator,
+        formatter: ResponseFormatter,
     ):
         self.ctx = ctx
         self.params: Params = ctx.settings.params
-        self.prompt_template = prompt_template
-        self.input_prompts: str = input_prompts[self.params.prompt_key]
-        
-        self.retriever = DocumentRetriever(ctx, faiss_store)
-        self.processor = DocumentProcessor()
-        self.generator = ResponseGenerator(ctx, hf_pipeline, prompt_template)
-        self.formatter = ResponseFormatter()
-        
-    def run(self):
-        rag_pipeline = self.build_rag_system()
-        response = InvokeRAG(self.ctx, rag_pipeline).invoke_response(self.input_prompts)
-        return {"generated-answers": response}
-        
-    def build_rag_system(self):
+        self.retriever = retriever
+        self.processor = processor
+        self.generator = generator
+        self.formatter = formatter
+
+    def build(self):
         retrieval_step = self.retriever.as_runnable()
         processing_step = self.processor.as_runnable()
         generation_step = self.generator.as_runnable()

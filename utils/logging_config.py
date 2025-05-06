@@ -121,7 +121,6 @@ def setup_logging(name, project_dir, log_file_name, config):
             "PIL": {"level": "WARNING", "handlers": ["console", "file"], "propagate": False},
             "pyplot": {"level": "WARNING", "handlers": ["console", "file"], "propagate": False},
             "matplotlib": {"level": "WARNING", "handlers": ["console", "file"], "propagate": False},
-            "matplotlib.font_manager": {"level": "WARNING", "handlers": ["console", "file"], "propagate": False},
         },
         "root": {
             "level": root_level,

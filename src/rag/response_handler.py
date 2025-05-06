@@ -1,46 +1,30 @@
 from __future__ import annotations
 
+import logging
 from operator import itemgetter
 from typing import Dict, Any
 
 from config.pipeline_context import PipelineContext
 from config.settings import Params
+from src.core.data_handling.lazy_load import LazyLoad
+from src.core.data_handling.data_module_handler import DataModuleHandler
 
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnableLambda, RunnableMap
 from langchain_huggingface import HuggingFacePipeline
 
 
-
 class ResponseGenerator:
     def __init__(
         self, ctx: PipelineContext,
         language_pipeline: HuggingFacePipeline,
-        prompt_template: str
+        prompt_template: LazyLoad
     ):
         self.ctx = ctx
+        self.dm_handler = DataModuleHandler(ctx)
         self.language_pipeline = language_pipeline
         self.params: Params = ctx.settings.params
-        self.prompt_template: ChatPromptTemplate = ChatPromptTemplate.from_template(prompt_template)
-    
-    def generate(self, processed_doc: Dict[str, Any]) -> Dict[str, Any]:
-        context = processed_doc["context"]
-        question = processed_doc["question"]
-        sources = processed_doc["sources"]
-        source_docs = processed_doc["source_docs"]
-        
-        prompt_args = {
-            "context": context,
-            "question": question,
-            "sources": sources
-        }
-        
-        prompt = self.prompt_template.format_prompt(**prompt_args).text
-        response = self.language_pipeline.invoke(prompt)
-        return {
-            "response": response,
-            "source_docs": source_docs
-        }
+        self.prompt_template = ChatPromptTemplate.from_template(prompt_template.load(self.dm_handler))
     
     def as_runnable(self) -> RunnableMap:
         input_mapping = {
@@ -48,8 +32,14 @@ class ResponseGenerator:
             "question": itemgetter("question"),
             "sources": itemgetter("sources"),
         }
+        
         return RunnableMap({
-            "response": input_mapping | self.prompt_template | self.language_pipeline,
+            "response": (
+                input_mapping 
+                | RunnableLambda(lambda x: logging.debug(f"Final Prompt:\n{self.prompt_template.format(**x)}") or x)
+                | self.prompt_template 
+                | self.language_pipeline
+            ),
             "source_docs": itemgetter("source_docs")
         })
 
@@ -67,6 +57,7 @@ class ResponseFormatter:
                 "source": doc.metadata.get("source_file", "Unknown"),
                 "page_count": doc.metadata.get("page_count", "Unknown"),
                 "object_count": doc.metadata.get("object_count", "Unknown"),
+                "page_content": doc.page_content,
             }
             metadata.append(meta_entry)
         

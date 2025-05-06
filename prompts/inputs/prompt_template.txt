@@ -1,12 +1,9 @@
 
 """
-Context information:
+Answer concisely using this context:
 {context}
-
-Sources:
-{sources}
 
 User Question: {question}
 
-Provide a concise summary based on the context above. Include relevant source information in your response.
+Provide a concise summary based on the context above. Include relevant source information in your response. Ensure your answer is at least 2 or 3 sentences long. 
 """

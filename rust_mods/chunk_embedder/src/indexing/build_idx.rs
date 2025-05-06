@@ -12,6 +12,7 @@ pub fn run(records: Vec<DocumentEmbedding>, output_path: &PathBuf) -> Result<Box
     let dim = records[0].embedding.len();
     let index_description = "Flat";
     let metric = MetricType::L2;
+    // let metric = MetricType::InnerProduct;
 
     let mut index = index_factory(dim as u32, index_description, metric)?;
     for rec in &records {
